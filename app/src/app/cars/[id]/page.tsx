@@ -3,8 +3,9 @@ import { notFound } from 'next/navigation';
 import { prisma } from '@/lib/prisma';
 import { formatCurrency } from '@/lib/utils';
 
-export default async function CarDetailsPage({ params }: { params: { id: string } }) {
-  const car = await prisma.car.findUnique({ where: { id: params.id }, include: { images: true } });
+export default async function CarDetailsPage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
+  const car = await prisma.car.findUnique({ where: { id }, include: { images: true } });
 
   if (!car) notFound();
 

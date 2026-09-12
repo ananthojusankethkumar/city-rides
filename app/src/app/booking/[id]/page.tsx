@@ -2,8 +2,9 @@ import Link from 'next/link';
 import { prisma } from '@/lib/prisma';
 import { formatCurrency } from '@/lib/utils';
 
-export default async function BookingPage({ params }: { params: { id: string } }) {
-  const car = await prisma.car.findUnique({ where: { id: params.id }, include: { images: true } });
+export default async function BookingPage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
+  const car = await prisma.car.findUnique({ where: { id }, include: { images: true } });
 
   if (!car) {
     return <main className="mx-auto max-w-4xl px-4 py-16 text-center">Car not found.</main>;

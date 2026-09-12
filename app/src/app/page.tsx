@@ -5,7 +5,7 @@ import { ArrowRight, CalendarCheck2, CarFront, MapPinned, ShieldCheck, Star, Use
 
 export default async function HomePage() {
   const featured = await prisma.car.findMany({ take: 3, include: { images: true } });
-  const reviews = await prisma.review.findMany({ take: 3 });
+  const reviews = await prisma.review.findMany({ take: 3, include: { user: true } });
 
   return (
     <main className="min-h-screen text-slate-900">
@@ -161,11 +161,11 @@ export default async function HomePage() {
         </div>
         <div className="grid gap-6 md:grid-cols-3">
           {reviews.map((r) => {
-            const reviewerName = (r as any).name ?? 'Guest';
+            const reviewerName = r.user?.name ?? 'Guest';
             return (
-              <div key={(r as any).id} className="card-surface rounded-[28px] p-6">
-                <div className="mb-3 flex items-center gap-1 text-orange-500">{Array.from({ length: (r as any).rating || 0 }).map((_, idx) => <Star key={idx} size={16} fill="currentColor" />)}</div>
-                <p className="text-slate-700">“{(r as any).comment}”</p>
+              <div key={r.id} className="card-surface rounded-[28px] p-6">
+                <div className="mb-3 flex items-center gap-1 text-orange-500">{Array.from({ length: r.rating || 0 }).map((_, idx) => <Star key={idx} size={16} fill="currentColor" />)}</div>
+                <p className="text-slate-700">“{r.comment}”</p>
                 <div className="mt-6 flex items-center gap-3">
                   <div className="flex h-10 w-10 items-center justify-center rounded-full bg-slate-900 text-sm font-bold text-white">{reviewerName[0]}</div>
                   <span className="font-semibold">{reviewerName}</span>

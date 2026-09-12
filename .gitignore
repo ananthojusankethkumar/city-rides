@@ -17,13 +17,18 @@ app/.env
 app/.env.local
 app/.env.*.local
 FIREBASE_SERVICE_ACCOUNT
+*firebase-adminsdk*.json
+*.pem
+*.key
+
 
 # DB
 **/dev.db
 
-# Logs
-npm-debug.log*
-.yarn-error.log*
+# Firebase
+.firebase/
+firebase-debug.log*
+app/firebase-debug.log*
 
 # Misc
 .DS_Store
