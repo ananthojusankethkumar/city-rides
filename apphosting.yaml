@@ -5,3 +5,13 @@ runConfig:
   concurrency: 80
   cpu: 1
   memoryMiB: 512
+
+env:
+  - variable: DATABASE_URL
+    value: "file:./dev.db"
+  - variable: JWT_SECRET
+    value: "city-rides-production-secret-key-2026"
+  - variable: NEXT_PUBLIC_APP_URL
+    value: "https://city-ride-8bfdd.web.app"
+  - variable: ADMIN_EMAIL
+    value: "admin@cityrides.com"

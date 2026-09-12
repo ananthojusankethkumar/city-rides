@@ -3,6 +3,8 @@ import { prisma } from '@/lib/prisma';
 import { formatCurrency } from '@/lib/utils';
 import { ArrowRight, CalendarCheck2, CarFront, MapPinned, ShieldCheck, Star, Users } from 'lucide-react';
 
+export const dynamic = 'force-dynamic';
+
 export default async function HomePage() {
   const featured = await prisma.car.findMany({ take: 3, include: { images: true } });
   const reviews = await prisma.review.findMany({ take: 3, include: { user: true } });

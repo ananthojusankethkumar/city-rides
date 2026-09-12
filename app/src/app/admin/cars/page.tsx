@@ -3,6 +3,8 @@ import { formatCurrency } from '@/lib/utils';
 import Link from 'next/link';
 import { prisma } from '@/lib/prisma';
 
+export const dynamic = 'force-dynamic';
+
 export default async function AdminCarsPage() {
   const cars = await prisma.car.findMany({ include: { images: true } });
 
