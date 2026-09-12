@@ -4,10 +4,11 @@
   "private": true,
   "scripts": {
     "dev": "npm --prefix app run dev",
-    "build": "npm --prefix app run build",
+    "build": "cd app && npm install && npx prisma generate && next build",
     "start": "npm --prefix app run start"
   },
   "devDependencies": {
-    "@types/jsonwebtoken": "^9.0.10"
+    "@types/jsonwebtoken": "^9.0.10",
+    "prisma": "5.22.0"
   }
 }
