@@ -1,4 +1,12 @@
 {
+  "name": "city-rides",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "npm --prefix app run dev",
+    "build": "npm --prefix app run build",
+    "start": "npm --prefix app run start"
+  },
   "devDependencies": {
     "@types/jsonwebtoken": "^9.0.10"
   }
