@@ -1,17 +1,17 @@
 import { NextResponse } from 'next/server';
 import { initFirebaseAdmin } from '@/lib/firebaseAdmin';
 
-initFirebaseAdmin();
-
 export async function POST(request: Request) {
   const body = await request.json().catch(() => ({}));
   const idToken = body.idToken || null;
   if (!idToken) return NextResponse.json({ error: 'missing idToken' }, { status: 400 });
 
   try {
-    const admin = (await import('firebase-admin')).default;
+    // initialize admin with service account if available
+    initFirebaseAdmin();
+    const admin = await import('firebase-admin');
     const expiresIn = 60 * 60 * 24 * 5 * 1000; // 5 days
-    const sessionCookie = await admin.auth().createSessionCookie(idToken, { expiresIn });
+    const sessionCookie = await (admin as any).auth().createSessionCookie(idToken, { expiresIn });
 
     const res = NextResponse.json({ ok: true });
     res.cookies.set({

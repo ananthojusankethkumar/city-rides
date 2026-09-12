@@ -5,7 +5,7 @@ import { prisma } from './prisma';
 export type SessionUser = {
   id: string;
   email: string;
-  role: 'CUSTOMER' | 'ADMIN';
+  role: string;
   name: string;
 };
 

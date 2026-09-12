@@ -89,7 +89,7 @@ export default async function HomePage() {
         <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
           {featured.map((car) => (
             <div key={car.id} className="card-surface overflow-hidden rounded-[28px] p-3">
-              <img src={car.image} alt={car.model} className="h-52 w-full rounded-[22px] object-cover" />
+              <img src={car.images?.[0]?.url ?? '/placeholder.png'} alt={car.model} className="h-52 w-full rounded-[22px] object-cover" />
               <div className="p-4">
                 <div className="mb-3 flex items-center justify-between">
                   <div>
@@ -160,16 +160,19 @@ export default async function HomePage() {
           </div>
         </div>
         <div className="grid gap-6 md:grid-cols-3">
-          {reviews.map((r) => (
-            <div key={r.name} className="card-surface rounded-[28px] p-6">
-              <div className="mb-3 flex items-center gap-1 text-orange-500">{Array.from({ length: r.rating }).map((_, idx) => <Star key={idx} size={16} fill="currentColor" />)}</div>
-              <p className="text-slate-700">“{r.comment}”</p>
-              <div className="mt-6 flex items-center gap-3">
-                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-slate-900 text-sm font-bold text-white">{r.name[0]}</div>
-                <span className="font-semibold">{r.name}</span>
+          {reviews.map((r) => {
+            const reviewerName = (r as any).name ?? 'Guest';
+            return (
+              <div key={(r as any).id} className="card-surface rounded-[28px] p-6">
+                <div className="mb-3 flex items-center gap-1 text-orange-500">{Array.from({ length: (r as any).rating || 0 }).map((_, idx) => <Star key={idx} size={16} fill="currentColor" />)}</div>
+                <p className="text-slate-700">“{(r as any).comment}”</p>
+                <div className="mt-6 flex items-center gap-3">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-full bg-slate-900 text-sm font-bold text-white">{reviewerName[0]}</div>
+                  <span className="font-semibold">{reviewerName}</span>
+                </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       </section>
 

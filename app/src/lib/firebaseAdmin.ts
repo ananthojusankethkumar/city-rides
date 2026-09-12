@@ -1,8 +1,8 @@
-import admin from 'firebase-admin';
+import * as admin from 'firebase-admin';
 
-let adminApp: admin.app.App | undefined;
+let adminApp: any;
 
-function parseServiceAccountFromEnv(): admin.ServiceAccount | undefined {
+function parseServiceAccountFromEnv(): any | undefined {
   const raw = process.env.FIREBASE_SERVICE_ACCOUNT || process.env.FIREBASE_ADMIN_SERVICE_ACCOUNT;
   if (!raw) return undefined;
   try {
@@ -17,12 +17,21 @@ function parseServiceAccountFromEnv(): admin.ServiceAccount | undefined {
 }
 
 export function initFirebaseAdmin(serviceAccountJson?: admin.ServiceAccount) {
-  if (admin.apps.length) return admin.apps[0];
+  // avoid re-initializing
+  try {
+    if ((admin as any).apps && (admin as any).apps.length) return (admin as any).apps[0];
+  } catch (e) {}
 
   const sa = serviceAccountJson ?? parseServiceAccountFromEnv();
-  const credential = sa ? admin.credential.cert(sa) : admin.credential.applicationDefault();
 
-  adminApp = admin.initializeApp({
+  // If no service account and no ADC path, skip initializing here (avoids build-time errors)
+  if (!sa && !process.env.GOOGLE_APPLICATION_CREDENTIALS) {
+    return undefined;
+  }
+
+  const credential = sa ? (admin as any).credential.cert(sa) : (admin as any).credential.applicationDefault();
+
+  adminApp = (admin as any).initializeApp({
     credential,
     storageBucket: process.env.FIREBASE_ADMIN_STORAGE_BUCKET || process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET,
   });
