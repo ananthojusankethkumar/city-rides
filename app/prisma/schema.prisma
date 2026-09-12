@@ -1,0 +1,153 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id              String     @id @default(cuid())
+  name            String
+  email           String     @unique
+  passwordHash    String
+  phone           String?
+  address         String?
+  city            String?
+  drivingLicense  String?
+  avatarUrl       String?
+  role            String     @default("CUSTOMER")
+  isActive        Boolean    @default(true)
+  createdAt       DateTime   @default(now())
+  updatedAt       DateTime   @updatedAt
+  bookings        Booking[]
+  reviews         Review[]
+}
+
+model Location {
+  id          String   @id @default(cuid())
+  name        String
+  city        String
+  address     String
+  type        String   @default("pickup")
+  createdAt   DateTime @default(now())
+  cars        Car[]
+  bookings    Booking[] @relation("BookingLocation")
+  returnBookings Booking[] @relation("ReturnLocation")
+}
+
+model Car {
+  id               String       @id @default(cuid())
+  brand            String
+  model            String
+  variant          String
+  year             Int
+  plateNumber      String       @unique
+  description      String
+  dailyPrice       Float
+  weeklyPrice      Float?
+  monthlyPrice     Float?
+  securityDeposit  Float
+  fuelType         String
+  transmission     String
+  seats            Int
+  mileage          Int
+  features         String
+  status           String       @default("AVAILABLE")
+  availability     Boolean      @default(true)
+  locationId       String?
+  location         Location?    @relation(fields: [locationId], references: [id])
+  images           CarImage[]
+  bookings         Booking[]
+  reviews          Review[]
+  createdAt        DateTime     @default(now())
+  updatedAt        DateTime     @updatedAt
+}
+
+model CarImage {
+  id        String   @id @default(cuid())
+  url       String
+  carId     String
+  car       Car      @relation(fields: [carId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+}
+
+model Booking {
+  id               String        @id @default(cuid())
+  userId           String
+  user             User          @relation(fields: [userId], references: [id])
+  carId            String
+  car              Car           @relation(fields: [carId], references: [id])
+  pickupLocationId String?
+  pickupLocation   Location?     @relation("BookingLocation", fields: [pickupLocationId], references: [id])
+  returnLocationId String?
+  returnLocation   Location?     @relation("ReturnLocation", fields: [returnLocationId], references: [id])
+  pickupDateTime   DateTime
+  returnDateTime   DateTime
+  rentalDays       Int
+  subtotal         Float
+  taxes            Float
+  additionalCharges Float
+  deposit          Float
+  discount         Float
+  total            Float
+  status           String        @default("PENDING")
+  notes            String?
+  paymentStatus    String        @default("PENDING")
+  createdAt        DateTime      @default(now())
+  updatedAt        DateTime      @updatedAt
+  payment          Payment?
+  reviews          Review[]
+}
+
+model Payment {
+  id            String        @id @default(cuid())
+  bookingId     String        @unique
+  booking       Booking       @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+  amount        Float
+  status        String        @default("PENDING")
+  provider      String        @default("manual")
+  reference     String?
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+}
+
+model Review {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  carId     String
+  car       Car      @relation(fields: [carId], references: [id])
+  bookingId String?
+  booking   Booking? @relation(fields: [bookingId], references: [id])
+  rating    Int
+  comment   String
+  createdAt DateTime @default(now())
+}
+
+model Coupon {
+  id          String   @id @default(cuid())
+  code        String   @unique
+  discount    Float
+  active      Boolean  @default(true)
+  validUntil  DateTime?
+  createdAt   DateTime @default(now())
+}
+
+model BusinessSettings {
+  id              String   @id @default(cuid())
+  businessName    String   @default("City Rides")
+  logoUrl         String?
+  phone           String?
+  email           String?
+  address         String?
+  taxPercentage   Float    @default(10)
+  currency        String   @default("USD")
+  cancellationPolicy String @default("Free cancellation up to 48 hours before pickup.")
+  bookingRules    String   @default("Driver must be 21+ and hold a valid license.")
+  pickupLocations String?
+  returnLocations String?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
